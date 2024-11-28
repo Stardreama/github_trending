@@ -14,6 +14,7 @@ function App() {
     const fetchTrending = async () => {
       try {
         const response = await axios.get("http://localhost:5000/api/trending");
+        //服务器端const response = await axios.get("/api/trending");
         setRepos(response.data);
       } catch (err) {
         setError("无法获取数据，请稍后再试。");
