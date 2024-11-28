@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { List, Spin, Alert } from 'antd';
-import RepositoryCard from './components/RepositoryCard';
+// src/App.js
+
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { List, Spin, Alert } from "antd";
+import RepositoryCard from "./components/RepositoryCard";
 
 function App() {
   const [repos, setRepos] = useState([]);
@@ -11,10 +13,10 @@ function App() {
   useEffect(() => {
     const fetchTrending = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/trending');
+        const response = await axios.get("http://localhost:5000/api/trending");
         setRepos(response.data);
       } catch (err) {
-        setError('无法获取数据，请稍后再试。');
+        setError("无法获取数据，请稍后再试。");
       } finally {
         setLoading(false);
       }
