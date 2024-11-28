@@ -49,6 +49,7 @@ GitHub 每日热点是一个展示 GitHub 当日热门仓库的网站。通过�
 
 ## 项目结构
 
+```
 github-trending-site/
 ├── backend/
 │ ├── package.json
@@ -69,6 +70,7 @@ github-trending-site/
 │ └── styles/
 │ └── tailwind.css
 └── README.md
+```
 
 ## 安装与运行
 
