@@ -6,6 +6,13 @@ const { OpenAI } = require("openai");
 const { SocksProxyAgent } = require("socks-proxy-agent");
 const fetch = require("node-fetch");
 
+// 不使用环境变量
+
+// 在此处直接填写您的 OpenAI API 密钥和 GitHub Token
+const OPENAI_API_KEY =""
+  
+const GITHUB_TOKEN = ""
+
 // 创建代理代理人
 const proxyAgent = new SocksProxyAgent("socks5://127.0.0.1:10808");
 
@@ -17,7 +24,7 @@ const fetchWithProxy = (url, options = {}) => {
 
 // 初始化 OpenAI 客户端，传入自定义的 fetch 函数
 const openai = new OpenAI({
-  
+  apiKey: OPENAI_API_KEY, // 使用直接填写的 API 密钥
   fetch: fetchWithProxy,
 });
 
@@ -57,6 +64,7 @@ const fetchTrending = async () => {
 
       const starText = $(element).find('a[href$="/stargazers"]').text().trim();
       const stars = parseInt(starText.replace(/,/g, ""), 10) || 0;
+
       // 获取仓库的 README 内容
       let readmeContent = "";
       try {
@@ -66,7 +74,7 @@ const fetchTrending = async () => {
             headers: {
               "User-Agent": "Mozilla/5.0",
               Accept: "application/vnd.github.v3.raw",
-              
+              Authorization: `token ${GITHUB_TOKEN}`, // 使用直接填写的 GitHub Token
             },
             httpsAgent: proxyAgent,
           }
@@ -91,11 +99,11 @@ const fetchTrending = async () => {
             {
               role: "system",
               content:
-                "你是一个编程领域的专家，能够根据仓库的 README 内容自动生成合适的应用领域，以及前端和后端的技术栈。",
+                "你是一个编程领域的专家，能够根据仓库的 README 内容自动生成合适的项目分类、应用领域，以及前端和后端的技术栈。",
             },
             {
               role: "user",
-              content: `以下是一个 GitHub 仓库的 README 内容: """${readmeContent}""". 请根据该内容提供仓库的项目分类（学习资源" 或 "项目教程" 之一），以及技术栈信息。技术栈中，对于没有的部分，不需要返回。具体要求如下：
+              content: `以下是一个 GitHub 仓库的 README 内容: """${readmeContent}""". 请根据该内容提供仓库的项目分类（"学习资源" 或 "项目教程" 之一），以及技术栈信息。技术栈中，对于没有的部分，不需要返回。具体要求如下： 
 - 项目分类请返回 "学习资源" 或 "项目教程" 之一。
 - 如果不需要前端，请返回 "前端": "不需要"。
 - 如果需要前端，请返回前端的 "语言" 和 "框架"。
@@ -107,7 +115,7 @@ const fetchTrending = async () => {
 
 \`\`\`json
 {
-  "kind":"分类"
+  "kind":"分类",
   "applicationField": "应用领域",
   "techStack": {
     "frontend": {
@@ -146,31 +154,26 @@ const fetchTrending = async () => {
           console.error("解析 OpenAI 返回内容失败，使用默认值");
           console.error("OpenAI 返回内容:", content);
           parsedContent = {
+            kind: "未知",
             applicationField: "未知",
             techStack: {
               frontend: "未知",
-              backend: {
-                language: "未知",
-                framework: "未知",
-              },
+              backend: "未知",
               database: "未知",
             },
           };
         }
 
-        const { applicationField, techStack } = parsedContent;
+        const { kind, applicationField, techStack } = parsedContent;
 
         repoList.push({
           name: `${owner}/${repoName}`,
           url: repoUrl,
-          category: "未知", // 如果您仍然需要分类，可以单独处理
+          kind: kind || "未知",
           applicationField: applicationField || "未知",
           techStack: {
             frontend: techStack.frontend || "不需要",
-            backend: techStack.backend || {
-              language: "未知",
-              framework: "未知",
-            },
+            backend: techStack.backend || "不需要",
             database: techStack.database || "不需要",
           },
           description:
@@ -184,14 +187,11 @@ const fetchTrending = async () => {
         repoList.push({
           name: `${owner}/${repoName}`,
           url: repoUrl,
-          category: "未知",
+          kind: "未知",
           applicationField: "未知",
           techStack: {
             frontend: "未知",
-            backend: {
-              language: "未知",
-              framework: "未知",
-            },
+            backend: "未知",
             database: "未知",
           },
           description:
