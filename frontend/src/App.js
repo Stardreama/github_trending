@@ -13,7 +13,7 @@ function App() {
   useEffect(() => {
     const fetchTrending = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/trending");
+        const response = await axios.get("http://127.0.0.1:5000/api/trending");
         //服务器端const response = await axios.get("/api/trending");
         setRepos(response.data);
       } catch (err) {

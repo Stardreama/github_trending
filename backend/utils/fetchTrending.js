@@ -9,9 +9,9 @@ const fetch = require("node-fetch");
 // 不使用环境变量
 
 // 在此处直接填写您的 OpenAI API 密钥和 GitHub Token
-const OPENAI_API_KEY =""
-  
-const GITHUB_TOKEN = ""
+const OPENAI_API_KEY = "";
+
+const GITHUB_TOKEN = "";
 
 // 创建代理代理人
 const proxyAgent = new SocksProxyAgent("socks5://127.0.0.1:10808");
