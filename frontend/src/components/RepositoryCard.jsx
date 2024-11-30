@@ -1,9 +1,9 @@
-// src/components/RepositoryCard.js
+// src/components/RepositoryCard.jsx
 
-import React from 'react';
-import { Card, Tag } from 'antd';
-import { StarOutlined } from '@ant-design/icons';
-import PropTypes from 'prop-types';
+import React from "react";
+import { Card } from "antd";
+import { StarOutlined } from "@ant-design/icons";
+import PropTypes from "prop-types";
 
 /**
  * 格式化星数，将数字转换为带有 'k' 的字符串
@@ -12,7 +12,7 @@ import PropTypes from 'prop-types';
  */
 const formatStars = (stars) => {
   if (stars >= 1000) {
-    return (stars / 1000).toFixed(1) + 'k';
+    return (stars / 1000).toFixed(1) + "k";
   }
   return stars.toString();
 };
@@ -21,8 +21,8 @@ const RepositoryCard = ({ repo }) => {
   return (
     <Card
       hoverable
-      style={{ width: '100%' }}
-      bodyStyle={{ padding: '20px' }}
+      style={{ width: "100%" }}
+      bodyStyle={{ padding: "20px" }}
       className="shadow-md"
     >
       {/* 项目名称 */}
@@ -35,14 +35,6 @@ const RepositoryCard = ({ repo }) => {
         {repo.name}
       </a>
 
-      {/* 分类 */}
-      <div className="mt-2">
-        <span className="font-medium">分类：</span>
-        <Tag color={repo.category === '教程资源' ? 'green' : 'geekblue'}>
-          {repo.category}
-        </Tag>
-      </div>
-
       {/* 应用领域 */}
       <div className="mt-2">
         <span className="font-medium">应用领域：</span>
@@ -52,7 +44,42 @@ const RepositoryCard = ({ repo }) => {
       {/* 技术栈 */}
       <div className="mt-2">
         <span className="font-medium">技术栈：</span>
-        <span>{repo.techStack}</span>
+        <div className="ml-4">
+          {/* 前端 */}
+          {typeof repo.techStack.frontend === "string" ? (
+            repo.techStack.frontend !== "不需要" && (
+              <div>
+                <strong>前端：</strong>
+                <span>{repo.techStack.frontend}</span>
+              </div>
+            )
+          ) : (
+            <div>
+              <strong>前端：</strong>
+              <span>
+                {repo.techStack.frontend.language} +{" "}
+                {repo.techStack.frontend.framework}
+              </span>
+            </div>
+          )}
+
+          {/* 后端 */}
+          <div>
+            <strong>后端：</strong>
+            <span>
+              {repo.techStack.backend.language} +{" "}
+              {repo.techStack.backend.framework}
+            </span>
+          </div>
+
+          {/* 数据库 */}
+          {repo.techStack.database !== "不需要" && (
+            <div>
+              <strong>数据库：</strong>
+              <span>{repo.techStack.database}</span>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* 简介 */}
@@ -63,7 +90,7 @@ const RepositoryCard = ({ repo }) => {
 
       {/* 星数 */}
       <div className="mt-4 flex justify-end items-center">
-        <StarOutlined style={{ color: 'gold', marginRight: '5px' }} />
+        <StarOutlined style={{ color: "gold", marginRight: "5px" }} />
         <span className="font-semibold">{formatStars(repo.stars)}</span>
       </div>
     </Card>
@@ -75,9 +102,21 @@ RepositoryCard.propTypes = {
     name: PropTypes.string.isRequired,
     url: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
-    category: PropTypes.string.isRequired,
     applicationField: PropTypes.string.isRequired,
-    techStack: PropTypes.string.isRequired,
+    techStack: PropTypes.shape({
+      frontend: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.shape({
+          language: PropTypes.string.isRequired,
+          framework: PropTypes.string.isRequired,
+        }),
+      ]).isRequired,
+      backend: PropTypes.shape({
+        language: PropTypes.string.isRequired,
+        framework: PropTypes.string.isRequired,
+      }).isRequired,
+      database: PropTypes.string.isRequired,
+    }).isRequired,
     stars: PropTypes.number.isRequired,
     language: PropTypes.string.isRequired,
   }).isRequired,
